@@ -54,17 +54,17 @@ function handleSignInForm(event) {
     event.target.reset();
     console.log(loginData)
     userLogin(loginData);
-    
+
 }
 
 function userLogin(data) {
     axios.post(`${url}/user/login`, data).then(() => {
         alert("User Loggedin succesfully")
-        localStorage.setItem("user",data.email)
+        localStorage.setItem("user", data.email)
     }).catch((error) => {
-        console.log(error)
+        console.log(error.response.data.message)
         const errormsg = document.getElementById('errormsg')
-        errormsg.innerHTML = error.message
+        errormsg.innerHTML = error.response.data.message
         alert(error)
     })
 }

@@ -43,7 +43,7 @@ exports.postLoginUser = (req, res, next) => {
             res.status(200).json({ success: true })
         }
         else {
-            res.status(401).json({ success: false, message: 'Invalid password' })
+            res.status(401).json({ success: false, message: 'Invalid password. User not authorized' })
         }
 
     }).catch((error) => {
