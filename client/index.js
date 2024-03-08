@@ -47,6 +47,8 @@ function postSignUpData(data) {
 
 function handleSignInForm(event) {
     event.preventDefault();
+    const errormsg = document.getElementById('errormsg')
+    errormsg.innerHTML = ''
     const loginData = {
         email: event.target.loginemail.value,
         password: event.target.loginPassword.value
