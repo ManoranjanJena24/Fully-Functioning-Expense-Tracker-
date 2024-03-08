@@ -63,6 +63,9 @@ function userLogin(data) {
     axios.post(`${url}/user/login`, data).then(() => {
         alert("User Loggedin succesfully")
         localStorage.setItem("user", data.email)
+        // window.location.href = '/client/expense.html'; 
+        window.location.href = 'expense.html';
+
     }).catch((error) => {
         console.log(error.response.data.message)
         const errormsg = document.getElementById('errormsg')
