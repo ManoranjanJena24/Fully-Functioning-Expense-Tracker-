@@ -5,15 +5,15 @@ exports.postCreateUser = (req, res, next) => {
     const name = req.body.name;
     const email = req.body.email;
     const password = req.body.password;
-   
-     User.create({
-         name: name,
-         email: email,
-         password: password,
+
+    User.create({
+        name: name,
+        email: email,
+        password: password,
 
     }).then((result) => {
         console.log("Created User")
-       res.send("User Created SuccessFully")
+        res.send("User Created SuccessFully")
     }).catch((err) => {
         console.log(err)
         // res.send(err.errors[0].message)
@@ -27,4 +27,28 @@ exports.postCreateUser = (req, res, next) => {
     })
 
 };
+
+
+exports.postLoginUser = (req, res, next) => {
+    const email = req.body.email
+    const password = req.body.password
+    User.findOne({
+        where: {
+            email: email,
+
+
+        }
+    }).then((user) => {
+        if (user.password === password) {
+            res.status(200).json({ success: true })
+        }
+        else {
+            res.status(401).json({ success: false, message: 'Invalid password' })
+        }
+
+    }).catch((error) => {
+        res.status(404).json({ success: false, message: 'User not found' })
+    })
+
+}
 

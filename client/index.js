@@ -44,3 +44,27 @@ function postSignUpData(data) {
 
     })
 }
+
+function handleSignInForm(event) {
+    event.preventDefault();
+    const loginData = {
+        email: event.target.loginemail.value,
+        password: event.target.loginPassword.value
+    }
+    event.target.reset();
+    console.log(loginData)
+    userLogin(loginData);
+    
+}
+
+function userLogin(data) {
+    axios.post(`${url}/user/login`, data).then(() => {
+        alert("User Loggedin succesfully")
+        localStorage.setItem("user",data.email)
+    }).catch((error) => {
+        console.log(error)
+        const errormsg = document.getElementById('errormsg')
+        errormsg.innerHTML = error.message
+        alert(error)
+    })
+}
