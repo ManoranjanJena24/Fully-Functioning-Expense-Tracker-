@@ -4,12 +4,22 @@ exports.postAddExpense = (req, res, next) => {
     const amount = req.body.amount;
     const description = req.body.description;
     const category = req.body.category;
+    //  console.log(req.user)
+    const userId = req.user.id//changes
+
+    console.log('user id inside add expense', req.user.id)
 
     console.log("Inside Add User")
-    Expense.create({
+    // Expense.create({
+    // amount: amount,
+    // description: description,
+    // category: category,
+    //     userId:userId
+    // })
+    req.user.createExpense({
         amount: amount,
         description: description,
-        category: category
+        category: category,
     })
         .then(result => {
             console.log("Created Expense");
@@ -25,9 +35,20 @@ exports.postAddExpense = (req, res, next) => {
 
 exports.getExpenses = (req, res, next) => {
     console.log("inside GET users")
-    Expense.findAll().then((expenses) => {
+    console.log('user id inbside getexpense', req.user.id)
+    // req.user.getExpenses()..then((expenses) => { //method 2 to do line 38-43
+    //     console.log("fetched Users")
+
+    //     res.json(expenses)
+
+    // })
+    Expense.findAll({ where: { userId: req.user.id } }).then((expenses) => {//changes
         console.log("fetched Users")
+
         res.json(expenses)
+
+    }).catch(err => {
+        console.log(err)
     })
 };
 
@@ -36,6 +57,8 @@ exports.postEditExpense = (req, res, next) => {
     const amount = req.body.amount
     const description = req.body.description
     const category = req.body.category
+
+
     Expense.findByPk(expenseId).then((expense) => {
         expense.amount = amount
         expense.description = description

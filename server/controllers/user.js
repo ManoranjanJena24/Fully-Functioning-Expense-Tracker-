@@ -1,8 +1,20 @@
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken')
+
+
 
 function generateHash(password) {
     return bcrypt.hash(password, bcrypt.genSaltSync(8));//genSaltSync randomizes the password 8 times 
+}
+
+function generateAccessToken(id) { //changed
+    // return jwt.sign({uerId:id},'your secret key')
+    return jwt.sign({ userId: id }, 'c6d0d73ab58eb9d8f25504c91d8ba7149d619db20109a47ea66821740e75b3f4')
+    //generate this secret key
+    //-npm i
+    //file key.js
+    //add key.js in gitignore 
 }
 
 exports.postCreateUser = (req, res, next) => {
@@ -46,6 +58,42 @@ function validPassword(password, dbPassword) {
     });
 }
 
+// exports.postLoginUser = (req, res, next) => {
+//     const email = req.body.email;
+//     const password = req.body.password;
+
+//     User.findOne({
+//         where: {
+//             email: email,
+//         }
+//     })
+//         .then((user) => {
+//             if (!user) {
+//                 return res.status(404).json({ success: false, message: 'User not found' });
+//             }
+            
+//             validPassword(password, user.password)
+//                 .then((isValid) => {
+//                     if (isValid) {
+//                         // req.session.user = user;
+//                         // console.log(req.session)
+//                         res.status(200).json({ success: true });
+//                     } else {
+//                         res.status(401).json({ success: false, message: 'Invalid password. User not authorized' });
+//                     }
+//                 })
+//                 .catch((error) => {
+//                     console.error(error);
+//                     res.status(500).json({ success: false, message: 'Internal Server Error' });
+//                 });
+//         })
+//         .catch((error) => {
+//             console.error(error);
+//             res.status(500).json({ success: false, message: 'Internal Server Error' });
+//         });
+// };
+
+
 exports.postLoginUser = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
@@ -63,9 +111,12 @@ exports.postLoginUser = (req, res, next) => {
             validPassword(password, user.password)
                 .then((isValid) => {
                     if (isValid) {
-                        res.status(200).json({ success: true });
+                        // req.session=user
+                        console.log(user.id)
+                        // console.log(req.session.name)
+                        return res.status(200).json({ success: true, token: generateAccessToken(user.id) });
                     } else {
-                        res.status(401).json({ success: false, message: 'Invalid password. User not authorized' });
+                        res.status(401).json({ success: false, message: 'Invalid password. User not authorized' });//changed
                     }
                 })
                 .catch((error) => {

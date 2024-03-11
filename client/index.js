@@ -60,9 +60,12 @@ function handleSignInForm(event) {
 }
 
 function userLogin(data) {
-    axios.post(`${url}/user/login`, data).then(() => {
+    axios.post(`${url}/user/login`, data).then((res) => {
         alert("User Loggedin succesfully")
         localStorage.setItem("user", data.email)
+        console.log(res.data.token)
+        console.log(res)
+        localStorage.setItem('token', res.data.token)
         // window.location.href = '/client/expense.html'; 
         window.location.href = 'expense.html';
 

@@ -3,6 +3,7 @@ var url = "http://localhost:3000"
 var editMode = false;
 let editId;
 let editedExpense
+let token;
 
 function handleFormSubmit(event) {
     event.preventDefault();
@@ -10,6 +11,7 @@ function handleFormSubmit(event) {
         amount: event.target.amount.value,
         description: event.target.description.value,
         category: event.target.category.value,
+        // userId: 1 //this is user Id //change the 1 later
     };
     // expenses.push(expense);
     // localStorage.setItem('expenses', JSON.stringify(expenses));
@@ -19,8 +21,9 @@ function handleFormSubmit(event) {
         editExpense(editId)
     }
     else {
-        axios.post(`${url}/expense/add-expense`, expense).then(res => {
+        axios.post(`${url}/expense/add-expense`, expense, { headers: { "Authorization": token } }).then(res => { //changes
             // console.log(res.data)
+            console.log('token', token)
             event.target.reset();
             getExpenses();
             // renderExpenses();
@@ -30,14 +33,15 @@ function handleFormSubmit(event) {
 
 }
 
-function getExpenses() {
-    axios.get(`${url}/expense/get-expenses`).then((data) => {
+function getExpenses() { //
+    axios.get(`${url}/expense/get-expenses`, { headers: { "Authorization": token } }).then((data) => { //changed
         console.log(data)
-        renderExpenses(data.data)
+        console.log(token)
+        renderExpenses(data.data)//changed
     })
 }
 
-function renderExpenses(expenses) {
+function renderExpenses(expenses) {//changed line 56 and 57 also
     console.log(expenses)
     const expensesList = document.getElementById('expensesList');
     expensesList.innerHTML = '';
@@ -50,15 +54,15 @@ function renderExpenses(expenses) {
         const li = document.createElement('li');
         li.className = 'list-group-item';
         li.innerHTML = `
-      ${expense.amount} - ${expense.description} - ${expense.category}
+      ${expense.amount} - ${expense.description} - ${expense.category} 
       <button type="button" class="btn btn-danger btn-sm float-right ml-2" onclick="deleteExpense(${id})">Delete</button>
-      <button type="button" class="btn btn-warning btn-sm float-right" onclick="editButton1(${id},${newExpense})">Edit</button>
+      <button type="button" class="btn btn-warning btn-sm float-right" onclick="editExpense(${id},${newExpense})">Edit</button>
     `;
         expensesList.appendChild(li);
     });
 }
 
-function deleteExpense(id) {
+function deleteExpense(id) {//changes
     // expenses.splice(index, 1);
     // localStorage.setItem('expenses', JSON.stringify(expenses));
     // renderExpenses();
@@ -66,7 +70,7 @@ function deleteExpense(id) {
     console.log(id)
     const deleteUrl = `${url}/expense/delete-expense/${id}`;
 
-    axios.delete(deleteUrl)
+    axios.delete(deleteUrl) //chamged
         .then(response => {
             console.log('Expense deleted successfully:', response.data);
             getExpenses(); // Refresh the expenses list after deletion
@@ -87,12 +91,13 @@ function editButton1(index, expense) {
 
 }
 
-function editExpense(id) {
+function editExpense(id) { //changes
     const editUrl = `${url}/expense/edit-expense/${id}`;
     console.log(id)
+    console.log(token)
 
 
-    axios.post(editUrl)
+    axios.post(editUrl, { headers: { "Authorization": token } }) //chamged
         .then(response => {
             console.log('Expense deleted successfully:', response.data);
             getExpenses(); // Refresh the expenses list after deletion
@@ -102,4 +107,8 @@ function editExpense(id) {
         });
 }
 
-document.addEventListener('DOMContentLoaded', getExpenses);
+window.addEventListener('DOMContentLoaded', () => { //changed
+    token = localStorage.getItem('token')
+    // console.log(token)
+    getExpenses()
+});
