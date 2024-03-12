@@ -128,8 +128,14 @@ function razoorpayfunction(event) {
         rzp1.open()
         event.preventDefault();
         rzp1.on('payment.failed', function (res) {
-            console.log(res)
-            alert("Something Went Wrong")
+            console.log(res, 'goung to backend to make changes in db as status failed')
+            console.log(options.order_id)
+            axios.post(`${url}/purchase/updateTransactionStatus/failed`, {
+                order_id: options.order_id
+            }, { headers: { "Authorization": token } }).then(() => {
+                alert("Something Went veryyy Wrong")
+            }).catch(err => console.log(err))
+            // alert("Something Went veryyy Wrong")
         })
 
 

@@ -1,6 +1,11 @@
 const Razorpay = require('razorpay')
 const Order = require('../models/order')
 
+// const razorpay = new Razorpay({
+//     key_id: process.env.RAZORPAY_KEY_ID,
+//     key_secret: process.env.RAZORPAY_KEY_SECRET
+// });
+
 const purchasePremium = async (req, res, next) => {
     console.log(process.env.RAZORPAY_KEY_ID, ' key ')
     try {
@@ -37,6 +42,15 @@ const purchasePremium = async (req, res, next) => {
     }
 }
 
+// const fetchPaymentDetails = async (paymentId) => {
+//     try {
+//         const payment = await razorpay.payments.fetch(paymentId);
+//         return payment.status;
+//     } catch (error) {
+//         console.error('Error fetching payment details:', error);
+//         throw error;
+//     }
+// };
 
 const updateTransactionStatus = async (req, res, next) => {
     try {
@@ -44,6 +58,10 @@ const updateTransactionStatus = async (req, res, next) => {
             payment_id,
             order_id
         } = req.body
+
+        // const status = await fetchPaymentDetails(payment_id);
+
+        
         Order.findOne({
             where: {
                 orderid: order_id
@@ -62,5 +80,31 @@ const updateTransactionStatus = async (req, res, next) => {
     }
 }
 
+const changeTransactionStatus = async (req, res, next) => {
+    try {
+        const {
+            order_id
+        } = req.body
 
-module.exports = { purchasePremium, updateTransactionStatus }
+        // const status = await fetchPaymentDetails(payment_id);
+
+        console.log('request details of failed order>>>>>', order_id)
+        Order.findOne({
+            where: {
+                orderid: order_id
+            }
+        }).then((order) => {
+            order.update({ status: 'FAILED' }).then(() => {
+                req.user.update({ ispremiumuser: false }).then(() => {
+                    return res.status(202).json({ success: true, message: 'TRANSCTION FAILED' })
+                }).catch(err => console.log(err))
+            }).catch(err => console.log(err))
+        })
+
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+
+module.exports = { purchasePremium, updateTransactionStatus, changeTransactionStatus }
