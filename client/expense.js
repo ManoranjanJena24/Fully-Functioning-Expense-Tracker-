@@ -26,7 +26,12 @@ function handleFormSubmit(event) {
             // console.log(res.data)
             console.log('token', token)
             event.target.reset();
+            if (localStorage.getItem('isPremium') === 'true') {
+                console.log('line44')
+                showLeaderBoard()
+            }
             getExpenses();
+           
             // renderExpenses();
         })
             .catch(err => console.log(err))
@@ -39,6 +44,7 @@ function getExpenses() { //
         console.log(data)
         console.log(token)
         renderExpenses(data.data)//changed
+        
     })
 }
 
@@ -112,14 +118,17 @@ function checkPremium(value) {
 
     const button = document.getElementById('razoorpay-button');
     const text = document.getElementById('premium-text')
+    const leaderBoard = document.getElementById("leaderBoard-button")
     // console.log(token)
     if (!value) {
         button.style.display = "inline-block";  //make the button visible
-        text.style.display = "none"
+        text.style.display = "none";
+        leaderBoard.style.display="none"
     }
     else {
         button.style.display = "none";  //Hide the button
-        text.style.display = "inline-block"
+        text.style.display = "inline-block";
+        leaderBoard.style.display = "inline-block"
     }
 }
 
@@ -214,6 +223,31 @@ function razoorpayfunction(event) {
         });
 }
 
+
+function showLeaderBoard() {
+    console.log("inside LeaderBoard")
+    axios.get(`${url}/expense/get-all-expenses`).then((data) => { //changed
+        console.log(data)
+        renderLeaderBoard(data.data)//changed
+    })
+}
+
+function renderLeaderBoard(expenses) {
+    console.log(expenses)
+    const expensesList = document.getElementById('LeaderBoard');
+    expensesList.innerHTML = '';
+
+    expenses.forEach((expense, index) => {
+        const id = expense.id;
+        // console.log(expense.id)
+        // console.log(expense)
+        let newExpense = JSON.stringify(expense)
+        const li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.innerHTML = ` ${expense.name} - ${expense.totalExpense}  `;
+        expensesList.appendChild(li);
+    });
+}
 
 function getUserDetails() {
     axios.get(`${url}/user/details`, { headers: { "Authorization": token } }).then((res) => {

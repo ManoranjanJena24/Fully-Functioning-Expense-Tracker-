@@ -1,5 +1,6 @@
 const Expense = require('../models/expense');
-
+const User = require('../models/user')
+const sequelize= require('sequelize')
 exports.postAddExpense = (req, res, next) => {
     const amount = req.body.amount;
     const description = req.body.description;
@@ -30,6 +31,55 @@ exports.postAddExpense = (req, res, next) => {
             res.status(500).json({ error: 'Internal Server Error' });
         });
 };
+
+// exports.getAllExpenses = (req, res, next) => {
+//     Expense.findAll().then((expenses) => {
+//        res.json(expenses)
+//     }).catch(err => {
+//         console.log(err)
+//     })
+// }
+
+exports.getAllExpenses = async (req, res, next) => {
+    User.findAll({
+        // Select relevant user columns
+        attributes: ['id', 'name', 'email', /* other user columns */],
+        include: [{
+            // Join expenses with users
+            model: Expense,
+            attributes: [], // Select no attributes from expenses (optional)
+        }],
+        // Group by user ID
+        group: ['id'],
+        
+        
+    })
+        .then(users => {
+            return Promise.all(users.map(async (user) => {
+                const totalExpense = await Expense.sum('amount', {
+                    where: { userId: user.id }, // Filter by user ID
+                });
+
+                return {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+        /* other user properties */
+                    totalExpense: totalExpense || 0, // Handle cases where there might be no expenses for a user (set to 0)
+                };
+            }));
+        })
+        .then(responseData => {
+            // Send the response
+            res.json(responseData.sort((a,b)=>b.totalExpense-a.totalExpense));
+        })
+        .catch(error => {
+            console.error('Error fetching users with expenses:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        });
+};
+
+
 
 
 

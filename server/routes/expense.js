@@ -10,6 +10,7 @@ const router = express.Router();
 
 // /users => GET
 router.get('/get-expenses',userAuthentication.authenticate, expenseController.getExpenses);
+router.get('/get-all-expenses', expenseController.getAllExpenses);
 
 router.post('/add-expense', userAuthentication.authenticate, expenseController.postAddExpense);
 
