@@ -10,6 +10,8 @@ router.post('/signup', userController.postCreateUser);
 
 router.post('/login', userController.postLoginUser)
 
+// router.get('/details', userController)
+
 
 
 

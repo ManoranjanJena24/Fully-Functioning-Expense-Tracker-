@@ -66,6 +66,7 @@ function userLogin(data) {
         console.log(res.data.token)
         console.log(res)
         localStorage.setItem('token', res.data.token)
+        localStorage.setItem('isPremium', res.data.isPremium)
         // window.location.href = '/client/expense.html'; 
         window.location.href = 'expense.html';
 

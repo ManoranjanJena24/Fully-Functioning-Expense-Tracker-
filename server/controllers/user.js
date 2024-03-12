@@ -114,7 +114,8 @@ exports.postLoginUser = (req, res, next) => {
                         // req.session=user
                         console.log(user.id)
                         // console.log(req.session.name)
-                        return res.status(200).json({ success: true, token: generateAccessToken(user.id) });
+                        isPremium = user.ispremiumuser
+                        return res.status(200).json({ success: true, token: generateAccessToken(user.id), isPremium: isPremium });
                     } else {
                         res.status(401).json({ success: false, message: 'Invalid password. User not authorized' });//changed
                     }

@@ -4,6 +4,7 @@ var editMode = false;
 let editId;
 let editedExpense
 let token;
+let isPremium;
 
 function handleFormSubmit(event) {
     event.preventDefault();
@@ -144,8 +145,22 @@ function razoorpayfunction(event) {
     })
 }
 
+function getUserDetails() {
+    axios.get(`${url}/user/details`, { headers: { "Authorization": token } }).then((res) => {
+        console.log(res)
+    }).catch((err) => {
+        console.log(err)
+    })
+}
 window.addEventListener('DOMContentLoaded', () => { //changed
     token = localStorage.getItem('token')
+    isPremium = localStorage.getItem('isPremium')
     // console.log(token)
+    if (isPremium) {
+        document.getElementById('razoorpay-button').style.display = 'none';
+    }
+    else {
+        document.getElementById('razoorpay-button').style.display = 'block';
+    }
     getExpenses()
 });
