@@ -4,7 +4,7 @@ var editMode = false;
 let editId;
 let editedExpense
 let token;
-let isPremium;
+// let isPremium;
 
 function handleFormSubmit(event) {
     event.preventDefault();
@@ -108,42 +108,112 @@ function editExpense(id) { //changes
         });
 }
 
+function checkPremium(value) {
 
+    const button = document.getElementById('razoorpay-button');
+    const text = document.getElementById('premium-text')
+    // console.log(token)
+    if (!value) {
+        button.style.display = "inline-block";  //make the button visible
+        text.style.display = "none"
+    }
+    else {
+        button.style.display = "none";  //Hide the button
+        text.style.display = "inline-block"
+    }
+}
+
+
+
+// function razoorpayfunction(event) {
+//     console.log("razoorpay clicked")
+//     axios.get(`${url}/purchase/premium-membership`, { headers: { "Authorization": token } }).then((res) => {
+//         console.log(res)
+//         var options = {
+//             "key": res.data.key_id,
+//             "order_id": res.data.order.id,
+//             "handler": async function (res) {
+//                 await axios.post(`${url}/purchase/updateTransactionStatus`, {
+//                     order_id: options.order_id,
+//                     payment_id: res.razorpay_payment_id
+//                 }, { headers: { "Authorization": token } })
+//                 alert('You are a premium User now')
+//             }
+//         }
+//         const rzp1 = new Razorpay(options)
+//         rzp1.open()
+//         event.preventDefault();
+//         rzp1.on('payment.failed', function (res) {
+//             console.log(res, 'goung to backend to make changes in db as status failed')
+//             console.log(options.order_id)
+//             axios.post(`${url}/purchase/updateTransactionStatus/failed`, {
+//                 order_id: options.order_id
+//             }, { headers: { "Authorization": token } }).then(() => {
+//                 alert("Something Went veryyy Wrong")
+//             }).catch(err => console.log(err))
+//             // alert("Something Went veryyy Wrong")
+//         })
+
+
+//     }).catch((err) => {
+//         console.log(err)
+//     })
+// }
 
 function razoorpayfunction(event) {
-    console.log("razoorpay clicked")
-    axios.get(`${url}/purchase/premium-membership`, { headers: { "Authorization": token } }).then((res) => {
-        console.log(res)
-        var options = {
-            "key": res.data.key_id,
-            "order_id": res.data.order.id,
-            "handler": async function (res) {
-                await axios.post(`${url}/purchase/updateTransactionStatus`, {
-                    order_id: options.order_id,
-                    payment_id: res.razorpay_payment_id
-                }, { headers: { "Authorization": token } })
-                alert('You are a premium User now')
-            }
-        }
-        const rzp1 = new Razorpay(options)
-        rzp1.open()
-        event.preventDefault();
-        rzp1.on('payment.failed', function (res) {
-            console.log(res, 'goung to backend to make changes in db as status failed')
-            console.log(options.order_id)
-            axios.post(`${url}/purchase/updateTransactionStatus/failed`, {
-                order_id: options.order_id
-            }, { headers: { "Authorization": token } }).then(() => {
-                alert("Something Went veryyy Wrong")
-            }).catch(err => console.log(err))
-            // alert("Something Went veryyy Wrong")
-        })
+    console.log("razoorpay clicked");
+    axios.get(`${url}/purchase/premium-membership`, { headers: { "Authorization": token } })
+        .then(async (res) => {
+            console.log(res);
+            const options = {
+                "key": res.data.key_id,
+                "order_id": res.data.order.id,
+                "handler": async function (res) {
+                    try {
+                        await axios.post(`${url}/purchase/updateTransactionStatus`, {
+                            order_id: options.order_id,
+                            payment_id: res.razorpay_payment_id
+                        }, { headers: { "Authorization": token } });
+                        localStorage.setItem('isPremium', 'true')
+                        checkPremium (true)
+                        // const button = document.getElementById('razoorpay-button');
+                        // const text = document.getElementById('premium-text')
+                        // button.style.display = "none";
+                        // text.style.display = "inline-block"
+                        alert('You are a premium User now');
+                    } catch (error) {
+                        console.error('Error updating transaction status:', error);
+                        alert("Something went wrong");
+                    }
+                }
+            };
 
+            const rzp1 = new Razorpay(options);
+            rzp1.open();
+            event.preventDefault();
 
-    }).catch((err) => {
-        console.log(err)
-    })
+            rzp1.on('payment.failed', function (res) {
+                console.log(res, 'going to backend to make changes in db as status failed');
+                console.log(options.order_id);
+
+                const updateFailedPromise = axios.post(`${url}/purchase/updateTransactionStatus/failed`, {
+                    order_id: options.order_id
+                }, { headers: { "Authorization": token } });
+
+                const alertPromise = new Promise((resolve) => {
+                    alert("Something went very wrong");
+                    resolve();
+                });
+
+                return Promise.all([updateFailedPromise, alertPromise])
+                    .catch(err => console.log(err));
+            });
+
+        }).catch((err) => {
+            console.log(err);
+        });
 }
+
 
 function getUserDetails() {
     axios.get(`${url}/user/details`, { headers: { "Authorization": token } }).then((res) => {
@@ -154,13 +224,6 @@ function getUserDetails() {
 }
 window.addEventListener('DOMContentLoaded', () => { //changed
     token = localStorage.getItem('token')
-    isPremium = localStorage.getItem('isPremium')
-    // console.log(token)
-    if (isPremium) {
-        document.getElementById('razoorpay-button').style.display = 'none';
-    }
-    else {
-        document.getElementById('razoorpay-button').style.display = 'block';
-    }
+    checkPremium(localStorage.getItem('isPremium') === 'true')
     getExpenses()
 });
