@@ -107,6 +107,37 @@ function editExpense(id) { //changes
         });
 }
 
+
+
+function razoorpayfunction(event) {
+    console.log("razoorpay clicked")
+    axios.get(`${url}/purchase/premium-membership`, { headers: { "Authorization": token } }).then((res) => {
+        console.log(res)
+        var options = {
+            "key": res.data.key_id,
+            "order_id": res.data.order.id,
+            "handler": async function (res) {
+                await axios.post(`${url}/purchase/updateTransactionStatus`, {
+                    order_id: options.order_id,
+                    payment_id: res.razorpay_payment_id
+                }, { headers: { "Authorization": token } })
+                alert('You are a premium User now')
+            }
+        }
+        const rzp1 = new Razorpay(options)
+        rzp1.open()
+        event.preventDefault();
+        rzp1.on('payment.failed', function (res) {
+            console.log(res)
+            alert("Something Went Wrong")
+        })
+
+
+    }).catch((err) => {
+        console.log(err)
+    })
+}
+
 window.addEventListener('DOMContentLoaded', () => { //changed
     token = localStorage.getItem('token')
     // console.log(token)
