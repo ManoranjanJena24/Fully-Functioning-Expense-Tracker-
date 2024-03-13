@@ -1,5 +1,6 @@
 const Razorpay = require('razorpay')
 const Order = require('../models/order')
+const User=require('../models/user')
 
 // const razorpay = new Razorpay({
 //     key_id: process.env.RAZORPAY_KEY_ID,
@@ -35,12 +36,24 @@ const purchasePremium = async (req, res, next) => {
     }
     catch (err) {
         console.log(err)
-        rest.status(403).json({
+        res.status(403).json({
             message: "Something Went Wrong",
             error: err
         })
     }
 }
+
+const getAllExpenses = async (req, res, next) => {
+    User.findAll({
+        attributes: ['id', 'name', 'totalexpense'], order: [['totalexpense', 'DESC']]
+    }).then(users => {
+        res.json(users)
+    }).catch(error => {
+        console.error('Error fetching users with expenses:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    });
+};
+
 
 // const fetchPaymentDetails = async (paymentId) => {
 //     try {
@@ -107,4 +120,4 @@ const changeTransactionStatus = async (req, res, next) => {
     }
 }
 
-module.exports = { purchasePremium, updateTransactionStatus, changeTransactionStatus }
+module.exports = { purchasePremium, updateTransactionStatus, changeTransactionStatus, getAllExpenses }

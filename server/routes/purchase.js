@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.get('/premium-membership', userAuthentication.authenticate, purchaseController.purchasePremium);
 
-
+router.get('/leaderboard', purchaseController.getAllExpenses)
 
 router.post('/updateTransactionStatus', userAuthentication.authenticate, purchaseController.updateTransactionStatus);
 

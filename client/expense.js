@@ -227,7 +227,9 @@ function razoorpayfunction(event) {
 
 function showLeaderBoard() {
     console.log("inside LeaderBoard")
-    axios.get(`${url}/expense/get-all-expenses`).then((data) => { //changed
+    // axios.get(`${url}/expense/get-all-expenses`).then((data) => { //changed
+    axios.get(`${url}/purchase/leaderboard`).then((data) => { //changed
+
         console.log(data)
         renderLeaderBoard(data.data)//changed
     })

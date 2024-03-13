@@ -1,6 +1,6 @@
 const Expense = require('../models/expense');
 const User = require('../models/user')
-const sequelize = require('sequelize');
+const sequelize = require('../utils/database')
 
 
 
@@ -153,80 +153,88 @@ exports.postEditExpense = (req, res, next) => {
 }
 
 
+// exports.postDeleteExpense = async (req, res, next) => {
+//     try {
+//         console.log("inside Delete");
+//         const expenseId = req.params.id;
+
+//         // Find the expense by primary key
+//         const expense = await Expense.findByPk(expenseId);
+
+//         if (!expense) {
+//             return res.status(404).json({ error: 'Expense not found' });
+//         }
+
+//         const expenseAmount = +expense.amount;
+
+//         // Delete the expense
+//         await expense.destroy();
+
+//         // Calculate new totalExpense
+//         const totalExpense = req.user.totalexpense - expenseAmount;
+
+//         // Update totalExpense in the user table
+//         const user = await User.findByPk(req.user.id);
+
+//         if (!user) {
+//             return res.status(404).json({ error: 'User not found' });
+//         }
+
+//         await user.update({ totalexpense: totalExpense });
+
+//         console.log("Updated totalExpense in user table");
+//         res.send('Deleted');
+//     } catch (err) {
+//         console.log(err);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// };
+
+
+
 exports.postDeleteExpense = async (req, res, next) => {
+    const t = await sequelize.transaction();
     try {
         console.log("inside Delete");
         const expenseId = req.params.id;
 
         // Find the expense by primary key
-        const expense = await Expense.findByPk(expenseId);
+        const expense = await Expense.findByPk(expenseId, { transaction: t });
 
         if (!expense) {
+            await t.rollback();
             return res.status(404).json({ error: 'Expense not found' });
         }
 
         const expenseAmount = +expense.amount;
 
         // Delete the expense
-        await expense.destroy();
+        await expense.destroy({ transaction: t });
 
         // Calculate new totalExpense
-        const totalExpense = req.user.totalexpense - expenseAmount;
-
-        // Update totalExpense in the user table
-        const user = await User.findByPk(req.user.id);
+        const user = await User.findByPk(req.user.id, { transaction: t });
 
         if (!user) {
+            await t.rollback();
             return res.status(404).json({ error: 'User not found' });
         }
 
-        await user.update({ totalexpense: totalExpense });
+        const totalExpense = req.user.totalexpense - expenseAmount;
+
+        // Update totalExpense in the user table
+        await user.update({ totalexpense: totalExpense }, { transaction: t });
 
         console.log("Updated totalExpense in user table");
+
+        // Commit the transaction
+        await t.commit();
+
         res.send('Deleted');
     } catch (err) {
         console.log(err);
+        await t.rollback();
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
 
 
-// exports.postDeleteExpense = (req, res, next) => {
-//     console.log("inside Delete")
-//     const expenseId = req.params.id
-//     Expense.findByPk(expenseId).then((expense) => {
-//         console.log(expense.amount)
-//         const expenseAmount = +expense.amount;
-//         const totalExpense = req.user.totalexpense - expenseAmount;
-//         expense.destroy();
-//     }).then((result) => {
-//         console.log("deleted")
-
-//         User.findByPk(req.user.id)
-//             .then(user => {
-//                 if (!user) {
-//                     return res.status(404).json({ error: 'User not found' });
-//                 }
-//                 // Update totalExpense in the user table
-//                 user.update({ totalexpense: totalExpense })
-//                     .then(() => {
-//                         console.log("Updated totalExpense in user table");
-//                         res.json(result);
-//                     })
-//                     .catch(err => {
-//                         console.log(err);
-//                         res.status(500).json({ error: 'Internal Server Error' });
-//                     });
-//             })
-//             .catch(err => {
-//                 console.log(err);
-//                 res.status(500).json({ error: 'Internal Server Error' });
-//             });
-
-//         console.log(req.user)
-//         res.send('Deleted')
-//     }).catch((err) => {
-//         console.log(err)
-//     })
-
-// };
