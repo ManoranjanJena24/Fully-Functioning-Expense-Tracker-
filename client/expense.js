@@ -244,7 +244,7 @@ function renderLeaderBoard(expenses) {
         let newExpense = JSON.stringify(expense)
         const li = document.createElement('li');
         li.className = 'list-group-item';
-        li.innerHTML = ` ${expense.name} - ${expense.totalExpense}  `;
+        li.innerHTML = ` ${expense.name} - ${expense.totalexpense}  `;
         expensesList.appendChild(li);
     });
 }

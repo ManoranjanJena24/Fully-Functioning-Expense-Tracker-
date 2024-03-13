@@ -8,7 +8,9 @@ exports.postAddExpense = (req, res, next) => {
     const category = req.body.category;
     //  console.log(req.user)
     const userId = req.user.id//changes
-    const totalExpense = req.user.totalexpense + req.body.amount;
+    const expenseAmount = +amount;
+    console.log(typeof (expenseAmount))
+    const totalExpense = req.user.totalexpense + expenseAmount;
 
     console.log('user id inside add expense', req.user)
 
@@ -98,26 +100,34 @@ exports.postAddExpense = (req, res, next) => {
 
 
 exports.getAllExpenses = async (req, res, next) => {
+    // User.findAll({
+    //     // Select relevant user columns
+    //     attributes: ['id', 'name',
+    //         // [sequelize.fn('sum', sequelize.col('expenses.amount')), 'totalExpense'], /* other user columns */],
+    //         [sequelize.fn('COALESCE', sequelize.fn('sum', sequelize.col('expenses.amount')), 0), 'totalExpense'], /* other user columns */ ],
+    //     include: [{
+    //         // Join expenses with users
+    //         model: Expense,
+    //         attributes: [], // Select no attributes from expenses (optional)
+    //     }],
+    //     // Group by user ID
+    //     group: ['id'],
+    //     order:[['totalExpense','DESC']]
+    // })
+    //     .then(users => {
+    //         res.json(users)
+    //     }).catch(error => {
+    //         console.error('Error fetching users with expenses:', error);
+    //         res.status(500).json({ error: 'Internal Server Error' });
+    //     });
     User.findAll({
-        // Select relevant user columns
-        attributes: ['id', 'name',
-            // [sequelize.fn('sum', sequelize.col('expenses.amount')), 'totalExpense'], /* other user columns */],
-            [sequelize.fn('COALESCE', sequelize.fn('sum', sequelize.col('expenses.amount')), 0), 'totalExpense'], /* other user columns */ ],
-        include: [{
-            // Join expenses with users
-            model: Expense,
-            attributes: [], // Select no attributes from expenses (optional)
-        }],
-        // Group by user ID
-        group: ['id'],
-        order:[['totalExpense','DESC']]
-    })
-        .then(users => {
-            res.json(users)
-        }).catch(error => {
-            console.error('Error fetching users with expenses:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
-        });
+        attributes: ['id', 'name', 'totalexpense'], order: [['totalexpense', 'DESC']]
+    }).then(users => {
+        res.json(users)
+    }).catch(error => {
+        console.error('Error fetching users with expenses:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    });
 };
 
 
