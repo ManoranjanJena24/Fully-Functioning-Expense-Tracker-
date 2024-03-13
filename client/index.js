@@ -77,3 +77,8 @@ function userLogin(data) {
         alert(error)
     })
 }
+
+
+function forgotPassword() {
+    window.location.href = 'forgotpassword.html';
+}
