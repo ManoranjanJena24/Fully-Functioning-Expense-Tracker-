@@ -25,16 +25,18 @@
       </ul>
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-          <button class="btn btn-outline-primary my-2 my-sm-0" id="razoorpay-button" type="button" onclick="razoorpayfunction(event)">Buy Premium</button>
+          <button class="btn btn-outline-primary my-2 my-sm-0" id="razoorpay-button" type="button"
+            onclick="razoorpayfunction(event)">Buy Premium</button>
           <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
           <p id="premium-text" class="navbar-brand">You Are A Premium User</p>
-          <button class="btn btn-outline-primary my-2 my-sm-0" id="leaderBoard-button" type="button" onclick="showLeaderBoard()">Show LeaderBoard</button>
+          <button class="btn btn-outline-primary my-2 my-sm-0" id="leaderBoard-button" type="button"
+            onclick="showLeaderBoard()">Show LeaderBoard</button>
         </li>
       </ul>
     </div>
   </nav>
 
-  <div class="container mt-4">
+  <div class="container mt-6">
     <form onsubmit="handleFormSubmit(event)" class="mb-4">
       <div class="form-group">
         <label for="amount">Choose Expense Amount</label>
