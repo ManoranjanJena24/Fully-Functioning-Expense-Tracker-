@@ -1,6 +1,50 @@
 const Expense = require('../models/expense');
 const User = require('../models/user')
-const sequelize = require('sequelize')
+const sequelize = require('sequelize');
+
+
+
+// exports.postAddExpense = async (req, res, next) => {
+//     const amount = req.body.amount;
+//     const description = req.body.description;
+//     const category = req.body.category;
+//     const userId = req.user.id;
+//     const expenseAmount = +amount;
+
+//     console.log('user id inside add expense', req.user);
+
+//     try {
+//         console.log("Inside Add User");
+//         const t = await sequelize.transaction();
+
+//         // Create expense
+//         const result = await req.user.createExpense({
+//             amount: amount,
+//             description: description,
+//             category: category,
+//         }, { transaction: t });
+
+//         console.log("Created Expense");
+
+//         // Find the user by primary key
+//         const user = await User.findByPk(req.user.id, { transaction: t });
+//         if (!user) {
+//             await t.rollback();
+//             return res.status(404).json({ error: 'User not found' });
+//         }
+
+//         // Update totalExpense in the user table
+//         const totalExpense = req.user.totalexpense + expenseAmount;
+//         await user.update({ totalexpense: totalExpense }, { transaction: t });
+
+//         await t.commit();
+//         console.log("Updated totalExpense in user table");
+//         res.json(result);
+//     } catch (err) {
+//         console.log(err);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// };
 
 exports.postAddExpense = (req, res, next) => {
     const amount = req.body.amount;
@@ -55,71 +99,7 @@ exports.postAddExpense = (req, res, next) => {
         });
 };
 
-
-// exports.getAllExpenses = async (req, res, next) => {
-//     User.findAll({
-//         // Select relevant user columns
-//         attributes: ['id', 'name',  /* other user columns */],
-//         include: [{
-//             // Join expenses with users
-//             model: Expense,
-//             attributes: [], // Select no attributes from expenses (optional)
-//         }],
-//         // Group by user ID
-//         group: ['id'], 
-
-
-
-
-
-//     })
-//         .then(users => {
-//             return Promise.all(users.map(async (user) => {
-//                 const totalExpense = await Expense.sum('amount', {
-//                     where: { userId: user.id }, // Filter by user ID
-//                 });
-
-//                 return {
-//                     id: user.id,
-//                     name: user.name,
-
-//         /* other user properties */
-//                     totalExpense: totalExpense || 0, // Handle cases where there might be no expenses for a user (set to 0)
-//                 };
-//             }));
-//         })
-//         .then(responseData => {
-//             // Send the response
-//             res.json(responseData.sort((a,b)=>b.totalExpense-a.totalExpense));
-//         })
-//         .catch(error => {
-//             console.error('Error fetching users with expenses:', error);
-//             res.status(500).json({ error: 'Internal Server Error' });
-//         });
-// };
-
-
 exports.getAllExpenses = async (req, res, next) => {
-    // User.findAll({
-    //     // Select relevant user columns
-    //     attributes: ['id', 'name',
-    //         // [sequelize.fn('sum', sequelize.col('expenses.amount')), 'totalExpense'], /* other user columns */],
-    //         [sequelize.fn('COALESCE', sequelize.fn('sum', sequelize.col('expenses.amount')), 0), 'totalExpense'], /* other user columns */ ],
-    //     include: [{
-    //         // Join expenses with users
-    //         model: Expense,
-    //         attributes: [], // Select no attributes from expenses (optional)
-    //     }],
-    //     // Group by user ID
-    //     group: ['id'],
-    //     order:[['totalExpense','DESC']]
-    // })
-    //     .then(users => {
-    //         res.json(users)
-    //     }).catch(error => {
-    //         console.error('Error fetching users with expenses:', error);
-    //         res.status(500).json({ error: 'Internal Server Error' });
-    //     });
     User.findAll({
         attributes: ['id', 'name', 'totalexpense'], order: [['totalexpense', 'DESC']]
     }).then(users => {
@@ -173,16 +153,80 @@ exports.postEditExpense = (req, res, next) => {
 }
 
 
-exports.postDeleteExpense = (req, res, next) => {
-    console.log("inside Delete")
-    const expenseId = req.params.id
-    Expense.findByPk(expenseId).then((expense) => {
-        return expense.destroy();
-    }).then((result) => {
-        console.log("deleted")
-        res.send('Deleted')
-    }).catch((err) => {
-        console.log(err)
-    })
+exports.postDeleteExpense = async (req, res, next) => {
+    try {
+        console.log("inside Delete");
+        const expenseId = req.params.id;
 
+        // Find the expense by primary key
+        const expense = await Expense.findByPk(expenseId);
+
+        if (!expense) {
+            return res.status(404).json({ error: 'Expense not found' });
+        }
+
+        const expenseAmount = +expense.amount;
+
+        // Delete the expense
+        await expense.destroy();
+
+        // Calculate new totalExpense
+        const totalExpense = req.user.totalexpense - expenseAmount;
+
+        // Update totalExpense in the user table
+        const user = await User.findByPk(req.user.id);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        await user.update({ totalexpense: totalExpense });
+
+        console.log("Updated totalExpense in user table");
+        res.send('Deleted');
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 };
+
+
+// exports.postDeleteExpense = (req, res, next) => {
+//     console.log("inside Delete")
+//     const expenseId = req.params.id
+//     Expense.findByPk(expenseId).then((expense) => {
+//         console.log(expense.amount)
+//         const expenseAmount = +expense.amount;
+//         const totalExpense = req.user.totalexpense - expenseAmount;
+//         expense.destroy();
+//     }).then((result) => {
+//         console.log("deleted")
+
+//         User.findByPk(req.user.id)
+//             .then(user => {
+//                 if (!user) {
+//                     return res.status(404).json({ error: 'User not found' });
+//                 }
+//                 // Update totalExpense in the user table
+//                 user.update({ totalexpense: totalExpense })
+//                     .then(() => {
+//                         console.log("Updated totalExpense in user table");
+//                         res.json(result);
+//                     })
+//                     .catch(err => {
+//                         console.log(err);
+//                         res.status(500).json({ error: 'Internal Server Error' });
+//                     });
+//             })
+//             .catch(err => {
+//                 console.log(err);
+//                 res.status(500).json({ error: 'Internal Server Error' });
+//             });
+
+//         console.log(req.user)
+//         res.send('Deleted')
+//     }).catch((err) => {
+//         console.log(err)
+//     })
+
+// };

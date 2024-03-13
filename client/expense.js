@@ -77,10 +77,11 @@ function deleteExpense(id) {//changes
     console.log(id)
     const deleteUrl = `${url}/expense/delete-expense/${id}`;
 
-    axios.delete(deleteUrl) //chamged
+    axios.delete(deleteUrl, { headers: { "Authorization": token } }) //chamged
         .then(response => {
             console.log('Expense deleted successfully:', response.data);
             getExpenses(); // Refresh the expenses list after deletion
+            showLeaderBoard() 
         })
         .catch(error => {
             console.error('Error deleting expense:', error);
