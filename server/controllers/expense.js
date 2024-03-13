@@ -1,30 +1,51 @@
 const Expense = require('../models/expense');
 const User = require('../models/user')
 const sequelize = require('sequelize')
+
 exports.postAddExpense = (req, res, next) => {
     const amount = req.body.amount;
     const description = req.body.description;
     const category = req.body.category;
     //  console.log(req.user)
     const userId = req.user.id//changes
+    const totalExpense = req.user.totalexpense + req.body.amount;
 
-    console.log('user id inside add expense', req.user.id)
+    console.log('user id inside add expense', req.user)
 
     console.log("Inside Add User")
-    // Expense.create({
-    // amount: amount,
-    // description: description,
-    // category: category,
-    //     userId:userId
-    // })
     req.user.createExpense({
         amount: amount,
         description: description,
         category: category,
     })
+        // .then(result => {
+        //     console.log("Created Expense");
+
+        //     res.json(result);
+        // })
         .then(result => {
             console.log("Created Expense");
-            res.json(result);
+            // Find the user by primary key
+            User.findByPk(req.user.id)
+                .then(user => {
+                    if (!user) {
+                        return res.status(404).json({ error: 'User not found' });
+                    }
+                    // Update totalExpense in the user table
+                    user.update({ totalexpense: totalExpense })
+                        .then(() => {
+                            console.log("Updated totalExpense in user table");
+                            res.json(result);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            res.status(500).json({ error: 'Internal Server Error' });
+                        });
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.status(500).json({ error: 'Internal Server Error' });
+                });
         })
         .catch(err => {
             console.log(err);

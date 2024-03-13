@@ -27,6 +27,7 @@ exports.postCreateUser = (req, res, next) => {
                 name: name,
                 email: email,
                 password: hashedPassword,
+                totalexpense:0,
             });
         })
         .then(result => {
@@ -71,7 +72,7 @@ function validPassword(password, dbPassword) {
 //             if (!user) {
 //                 return res.status(404).json({ success: false, message: 'User not found' });
 //             }
-            
+
 //             validPassword(password, user.password)
 //                 .then((isValid) => {
 //                     if (isValid) {
