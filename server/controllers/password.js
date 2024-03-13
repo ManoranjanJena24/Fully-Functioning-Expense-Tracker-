@@ -19,10 +19,11 @@ exports.postForgotEmail = (req, res, next) => {
         textContent: `this is your reset password link`
     }).then(() => {
         console.log("Mail Send")
+        res.json({ email: email })
     }).catch((err) => {
         console.log(err)
     })
-    res.json({ email: email })
+
 };
 
 
