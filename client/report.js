@@ -178,6 +178,22 @@ function renderMonthlySummary(reportData) {
     document.getElementById('monthlySummaryTable').removeAttribute('hidden');
 }
 
+function downloadReport() {
+    axios.get(`${url}/user/download`, { headers: { "Authorization": token } }).then((response) => {
+        if (response.status === 200) {
+            var a = document.createElement('a')
+            a.href = response.data.fileUrl
+            a.download='MyExpenseReport.csv'
+            a.click()
+        }
+        else {
+            alert(response.data.message)
+        }
+    }).catch((err) => {
+        console.log(err)
+    })
+}
+
 
 window.addEventListener('DOMContentLoaded', () => { //changed
     token = localStorage.getItem('token')

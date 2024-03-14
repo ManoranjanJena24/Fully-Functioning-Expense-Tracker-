@@ -1,7 +1,7 @@
 const Expense = require('../models/expense');
 const User = require('../models/user')
 const sequelize = require('../utils/database')
-
+const AWS = require('aws-sdk')
 
 
 // exports.postAddExpense = (req, res, next) => {
@@ -86,7 +86,7 @@ exports.postAddExpense = async (req, res, next) => {
 
         const totalExpense = user.totalexpense + expenseAmount;
         const savings = user.totalsavings - totalExpense;
-        await user.update({ totalexpense: totalExpense,totalsavings:savings }, { transaction });
+        await user.update({ totalexpense: totalExpense, totalsavings: savings }, { transaction });
 
         // Commit the transaction
         await transaction.commit();
@@ -236,3 +236,53 @@ exports.postDeleteExpense = async (req, res, next) => {
 };
 
 
+exports.downloadExpenses = async (req, res, next) => {
+    const expenses = await req.user.getExpenses()
+    console.log(expenses)
+    const stringifiedExpenses = JSON.stringify(expenses)
+    const userId = req.user.id
+    const fileName = `Expense${userId}/${new Date()}.txt`
+    const fileUrl = await uploadToS3(stringifiedExpenses,fileName)
+    res.status(200).json({
+        fileUrl, success: true
+
+    })
+
+}
+
+function uploadToS3(data, filename) {
+    console.log('data', data)
+    const BUCKET_NAME = process.env.BUCKET_NAME
+    const IAM_USER_KEY = process.env.IAM_USER_KEY
+    const IAM_USER_SECRET = process.env.IAM_USER_SECRET
+
+    let s3bucket = new AWS.S3({
+        accessKeyId: IAM_USER_KEY,
+        secretAccessKey: IAM_USER_SECRET,
+        // Bucket:BUCKET_NAME
+    })
+   
+        var params = {
+            Bucket: BUCKET_NAME,
+            Key: filename,
+            Body: data,
+            ACL:'public-read'
+
+    }
+    return new Promise((resolve,reject) => {
+        s3bucket.upload(params, (err, s3response) => {
+            if (err) {
+                console.log("Something Went Wrong", err)
+                reject(err)
+            }
+            else {
+                console.log(s3response)
+                resolve(s3response.Location)
+
+            }
+        })
+    })
+      
+ 
+
+}
