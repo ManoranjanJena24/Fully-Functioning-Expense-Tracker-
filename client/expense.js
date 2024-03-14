@@ -1,4 +1,3 @@
-// let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
 var url = "http://localhost:3000"
 var editMode = false;
 let editId;
@@ -29,9 +28,10 @@ function handleFormSubmit(event) {
             if (localStorage.getItem('isPremium') === 'true') {
                 console.log('line44')
                 showLeaderBoard()
+
             }
             getExpenses();
-           
+
             // renderExpenses();
         })
             .catch(err => console.log(err))
@@ -44,7 +44,7 @@ function getExpenses() { //
         console.log(data)
         console.log(token)
         renderExpenses(data.data)//changed
-        
+
     })
 }
 
@@ -81,7 +81,7 @@ function deleteExpense(id) {//changes
         .then(response => {
             console.log('Expense deleted successfully:', response.data);
             getExpenses(); // Refresh the expenses list after deletion
-            showLeaderBoard() 
+            showLeaderBoard()
         })
         .catch(error => {
             console.error('Error deleting expense:', error);
@@ -120,55 +120,21 @@ function checkPremium(value) {
     const button = document.getElementById('razoorpay-button');
     const text = document.getElementById('premium-text')
     const leaderBoard = document.getElementById("leaderBoard-button")
+    const salaryForm = document.getElementById('salary-form')
     // console.log(token)
     if (!value) {
         button.style.display = "inline-block";  //make the button visible
         text.style.display = "none";
-        leaderBoard.style.display="none"
+        leaderBoard.style.display = "none"
+        salaryForm.style.display = "none"
     }
     else {
         button.style.display = "none";  //Hide the button
         text.style.display = "inline-block";
         leaderBoard.style.display = "inline-block"
+        salaryForm.style.display = "inline-block"
     }
 }
-
-
-
-// function razoorpayfunction(event) {
-//     console.log("razoorpay clicked")
-//     axios.get(`${url}/purchase/premium-membership`, { headers: { "Authorization": token } }).then((res) => {
-//         console.log(res)
-//         var options = {
-//             "key": res.data.key_id,
-//             "order_id": res.data.order.id,
-//             "handler": async function (res) {
-//                 await axios.post(`${url}/purchase/updateTransactionStatus`, {
-//                     order_id: options.order_id,
-//                     payment_id: res.razorpay_payment_id
-//                 }, { headers: { "Authorization": token } })
-//                 alert('You are a premium User now')
-//             }
-//         }
-//         const rzp1 = new Razorpay(options)
-//         rzp1.open()
-//         event.preventDefault();
-//         rzp1.on('payment.failed', function (res) {
-//             console.log(res, 'goung to backend to make changes in db as status failed')
-//             console.log(options.order_id)
-//             axios.post(`${url}/purchase/updateTransactionStatus/failed`, {
-//                 order_id: options.order_id
-//             }, { headers: { "Authorization": token } }).then(() => {
-//                 alert("Something Went veryyy Wrong")
-//             }).catch(err => console.log(err))
-//             // alert("Something Went veryyy Wrong")
-//         })
-
-
-//     }).catch((err) => {
-//         console.log(err)
-//     })
-// }
 
 function razoorpayfunction(event) {
     console.log("razoorpay clicked");
@@ -185,7 +151,7 @@ function razoorpayfunction(event) {
                             payment_id: res.razorpay_payment_id
                         }, { headers: { "Authorization": token } });
                         localStorage.setItem('isPremium', 'true')
-                        checkPremium (true)
+                        checkPremium(true)
                         // const button = document.getElementById('razoorpay-button');
                         // const text = document.getElementById('premium-text')
                         // button.style.display = "none";
@@ -224,7 +190,6 @@ function razoorpayfunction(event) {
         });
 }
 
-
 function showLeaderBoard() {
     console.log("inside LeaderBoard")
     // axios.get(`${url}/expense/get-all-expenses`).then((data) => { //changed
@@ -250,6 +215,22 @@ function renderLeaderBoard(expenses) {
         li.innerHTML = ` ${expense.name} - ${expense.totalexpense}  `;
         expensesList.appendChild(li);
     });
+}
+
+function handleSalarySubmit(event) {
+    event.preventDefault();
+    const salary = document.getElementById('salary').value
+    addSalary(salary)
+    event.target.reset();
+}
+
+function addSalary(data) {
+    console.log(data)
+    axios.post(`${url}/salary/add-salary`, { salary: data }, { headers: { "Authorization": token } }).then((res) => {
+        console.log(res)
+    }).catch((err) => {
+        console.log(err)
+    })
 }
 
 function getUserDetails() {

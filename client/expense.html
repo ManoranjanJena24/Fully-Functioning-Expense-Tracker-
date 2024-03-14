@@ -59,6 +59,15 @@
       </div>
       <button type="submit" class="btn btn-primary">Add Expense</button>
     </form>
+
+    <form id="salary-form" onsubmit="handleSalarySubmit(event)" class="mb-4">
+      <div class="form-group">
+        <label for="salary">Enter salary received</label>
+        <input type="number" name="salary" id="salary" class="form-control" />
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
     <ul id="expensesList" class="list-group"></ul>
     <ul id="LeaderBoard" class="list-group"></ul>
   </div>

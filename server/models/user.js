@@ -14,7 +14,7 @@ const User = sequelize.define('users', {
     email: {
         type: Sequelize.STRING,
         allowNull: false,
-        
+
     },
     password: {
         type: Sequelize.STRING,
@@ -22,22 +22,28 @@ const User = sequelize.define('users', {
     },
     ispremiumuser: {
         type: Sequelize.BOOLEAN,
-        
+
     },
     totalexpense: {
         type: Sequelize.INTEGER,
 
     },
-    
-    
+    totalsalary: {
+        type: Sequelize.INTEGER,
+
+    },
+
+
 
 }
-   ,{ indexes: [
-    {
-        unique: true,
-        fields: ['email']
+    , {
+        indexes: [
+            {
+                unique: true,
+                fields: ['email']
+            }
+        ]
     }
-]}
 
 );
 

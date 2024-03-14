@@ -12,6 +12,7 @@ const User = require('./models/user')
 const Expense = require('./models/expense')
 const Order = require('./models/order')
 const ForgotPassword = require('./models/forgotPassword')
+const Salary = require('./models/salary')
 
 
 const app = express();
@@ -21,6 +22,7 @@ const userRoutes = require('./routes/user')
 const expenseRoutes = require('./routes/expense')
 const purchaseRoutes = require('./routes/purchase')
 const passwordRoutes = require('./routes/password')
+const salaryRoutes = require('./routes/salary')
 
 app.use(bodyParser.json({ extended: false }));
 app.use(cors())
@@ -33,6 +35,7 @@ app.use('/user', userRoutes);
 app.use('/expense', expenseRoutes)
 app.use('/purchase', purchaseRoutes)
 app.use('/password', passwordRoutes)
+app.use('/salary', salaryRoutes)
 
 Expense.belongsTo(User)
 User.hasMany(Expense)
@@ -40,12 +43,11 @@ Order.belongsTo(User)
 User.hasMany(Order)
 ForgotPassword.belongsTo(User)
 User.hasMany(ForgotPassword)
+Salary.belongsTo(User)
+User.hasMany(Salary)
 
 sequelize.sync({
     // force: true  //these should not be done in production becoz we donot want to overwrite the table everytime we run
     // alter:true
 })
 app.listen(3000)
-
-
-
