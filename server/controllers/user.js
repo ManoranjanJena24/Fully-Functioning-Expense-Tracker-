@@ -10,7 +10,7 @@ function generateHash(password) {
 
 function generateAccessToken(id) { //changed
     // return jwt.sign({uerId:id},'your secret key')
-    return jwt.sign({ userId: id }, 'c6d0d73ab58eb9d8f25504c91d8ba7149d619db20109a47ea66821740e75b3f4')
+    return jwt.sign({ userId: id }, process.env.TOKEN_SECRET)
     //generate this secret key
     //-npm i
     //file key.js
