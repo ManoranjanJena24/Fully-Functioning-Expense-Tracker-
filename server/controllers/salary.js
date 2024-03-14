@@ -26,7 +26,8 @@ exports.postAddSalary = async (req, res, next) => {
         }
 
         const totalsalary = user.totalsalary + salaryamt;
-        await user.update({ totalsalary: totalsalary }, { transaction });
+        const savings = user.totalsavings + salaryamt;
+        await user.update({ totalsalary: totalsalary,totalsavings:savings }, { transaction });
 
         // Commit the transaction
         await transaction.commit();

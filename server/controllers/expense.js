@@ -85,7 +85,8 @@ exports.postAddExpense = async (req, res, next) => {
         }
 
         const totalExpense = user.totalexpense + expenseAmount;
-        await user.update({ totalexpense: totalExpense }, { transaction });
+        const savings = user.totalsavings - totalExpense;
+        await user.update({ totalexpense: totalExpense,totalsavings:savings }, { transaction });
 
         // Commit the transaction
         await transaction.commit();

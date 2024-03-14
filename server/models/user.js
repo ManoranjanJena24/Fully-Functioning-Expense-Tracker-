@@ -32,7 +32,10 @@ const User = sequelize.define('users', {
         type: Sequelize.INTEGER,
 
     },
+    totalsavings: {
+        type: Sequelize.INTEGER,
 
+    },
 
 
 }
