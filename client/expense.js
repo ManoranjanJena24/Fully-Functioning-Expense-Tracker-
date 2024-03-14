@@ -122,18 +122,27 @@ function checkPremium(value) {
     const leaderBoard = document.getElementById("leaderBoard-button")
     const salaryForm = document.getElementById('salary-form')
     // console.log(token)
+    const reportBtn = document.getElementById('report-button'); //changes
     if (!value) {
         button.style.display = "inline-block";  //make the button visible
         text.style.display = "none";
         leaderBoard.style.display = "none"
         salaryForm.style.display = "none"
+        reportBtn.style.display = "none" //changes
     }
     else {
         button.style.display = "none";  //Hide the button
         text.style.display = "inline-block";
         leaderBoard.style.display = "inline-block"
         salaryForm.style.display = "inline-block"
+        reportBtn.style.display = "inline-block" //chNGES
+
     }
+}
+
+function showReport() {
+
+    window.location.href = 'report.html';
 }
 
 function razoorpayfunction(event) {

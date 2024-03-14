@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Report</title>
+    <link rel="stylesheet" href="report.css">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<body style="margin: 0">
+
+
+    <div class="container mt-6">
+
+
+
+
+        <button onclick="showReport()" class="btn btn-primary" id='view-report-btn'>View Report</button>
+
+        <table id="expenseSalaryTable" class="table" hidden>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Income</th>
+                    <th>Expense</th>
+                </tr>
+            </thead>
+            <tbody id="expenseSalaryTableBody"></tbody>
+        </table>
+
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+    <script src="report.js"></script>
+</body>
+
+</html>

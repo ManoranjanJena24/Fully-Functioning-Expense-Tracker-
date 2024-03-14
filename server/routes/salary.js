@@ -18,7 +18,7 @@ router.post('/add-salary', userAuthentication.authenticate, salaryController.pos
 // router.delete('/delete-expense/:id', userAuthentication.authenticate, expenseController.postDeleteExpense);
 
 // router.post('/edit-expense', expenseController.postEditExpense);
-
+router.get('/get-salaries', userAuthentication.authenticate, salaryController.getSalaries);//cahnges
 
 
 module.exports = router;

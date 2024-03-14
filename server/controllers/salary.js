@@ -41,21 +41,16 @@ exports.postAddSalary = async (req, res, next) => {
 
 
 
-// exports.getExpenses = (req, res, next) => {
-//     console.log("inside GET users")
-//     console.log('user id inbside getexpense', req.user.id)
-//     // req.user.getExpenses()..then((expenses) => { //method 2 to do line 38-43
-//     //     console.log("fetched Users")
+exports.getSalaries = (req, res, next) => {
+    console.log("inside GET salaries")
+    console.log('user id inbside getsalaries', req.user.id)
 
-//     //     res.json(expenses)
+    Salary.findAll({ where: { userId: req.user.id } }).then((salaries) => {//changes
+        console.log("fetched salaries")
 
-//     // })
-//     Expense.findAll({ where: { userId: req.user.id } }).then((expenses) => {//changes
-//         console.log("fetched Users")
+        res.json(salaries)
 
-//         res.json(expenses)
-
-//     }).catch(err => {
-//         console.log(err)
-//     })
-// };
+    }).catch(err => {
+        console.log(err)
+    })
+};
