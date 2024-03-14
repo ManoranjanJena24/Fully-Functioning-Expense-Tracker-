@@ -4,7 +4,7 @@ let token;
 function showReport() {
     console.log('report generated')
     document.getElementById('view-report-btn').style.display = 'none'
-
+    document.getElementById('yearlyTable').innerHTML = 'Yearly Report'
     document.getElementById('monthSelect').removeAttribute('hidden');
 
     const monthSelect = document.getElementById('monthSelect');
@@ -29,6 +29,7 @@ function showReport() {
             console.log('Sorted report data: ', reportData);
 
             renderTable(reportData, selectedMonth);
+            renderMonthlySummary(reportData);
         })
         .catch(err => {
             console.log(err);
@@ -36,7 +37,6 @@ function showReport() {
 
 
 }
-
 function renderTable(reportData, selectedMonth) {
     console.log('data to be rendered', reportData);
 
@@ -58,7 +58,7 @@ function renderTable(reportData, selectedMonth) {
             if (date.toLocaleDateString() !== currentDate) {
                 // Add total row for the previous date
                 if (currentDate) {
-                    tableRows += `<tr>
+                    tableRows += `<tr style="background-color: #F5F5F5;">
                                         <td colspan="3">Total for ${currentDate}</td>
                                         <td><strong>${totalIncome}</td>
                                         <td><strong>${totalExpense}</td>
@@ -96,7 +96,7 @@ function renderTable(reportData, selectedMonth) {
 
     // Add total row for the last date
     if (currentDate) {
-        tableRows += `<tr>
+        tableRows += `<tr style="background-color: #F5F5F5;">
                                 <td colspan="3">Total for ${currentDate}</td>
                                 <td><strong>${totalIncome}</td>
                                 <td><strong>${totalExpense}</td>
@@ -105,16 +105,16 @@ function renderTable(reportData, selectedMonth) {
 
     // Generate savings row
     totalSavings = totalIncomeMonth - totalExpenseMonth;
-    tableRows += `<tr>
+    tableRows += `<tr style="background-color: #F5F5F5;">
             <td colspan="3"></td>
-            <td style="color: green;"><strong>${totalIncomeMonth}</td>
-            <td style="color: red;"><strong>${totalExpenseMonth}</td>
+            <td style="color: green;"><strong>₹${totalIncomeMonth}</td>
+            <td style="color: red;"><strong>₹${totalExpenseMonth}</td>
              </tr>`;
-    tableRows += `<tr>
+    tableRows += `<tr style="background-color: #F5F5F5;">
             <td colspan="3"></td>
-                            <td style="color: blue;"><strong>Total Savings</td>
+                            <td style="color: blue;"><strong>₹Total Savings</td>
                           
-                            <td style="color: blue;"><strong>${totalSavings}</td>
+                            <td style="color: blue;"><strong>₹${totalSavings}</td>
                           </tr>`;
 
     const tableBody = document.getElementById('expenseSalaryTableBody');
@@ -125,6 +125,57 @@ function renderTable(reportData, selectedMonth) {
 
     // Show the table
     document.getElementById('expenseSalaryTable').removeAttribute('hidden');
+}
+function renderMonthlySummary(reportData) {
+    const monthlySummaryTableBody = document.getElementById('monthlySummaryTableBody');
+    monthlySummaryTableBody.innerHTML = '';
+
+    const monthlySummary = {};
+    reportData.forEach(item => {
+        const date = new Date(item.updatedAt);
+        const month = date.toLocaleString('default', { month: 'long' });
+        if (!monthlySummary[month]) {
+            monthlySummary[month] = {
+                income: 0,
+                expense: 0,
+                savings: 0
+            };
+        }
+        if ('amount' in item) {
+            monthlySummary[month].expense += item.amount;
+        } else {
+            monthlySummary[month].income += item.salary;
+        }
+    });
+
+    let totalIncomeYear = 0;
+    let totalExpenseYear = 0;
+    let totalSavingsYear = 0;
+
+    Object.entries(monthlySummary).forEach(([month, summary]) => {
+        totalIncomeYear += summary.income;
+        totalExpenseYear += summary.expense;
+        summary.savings = summary.income - summary.expense;
+        totalSavingsYear += summary.savings;
+
+        const row = `<tr>
+                    <td>${month}</td>
+                    <td>${summary.income}</td>
+                    <td>${summary.expense}</td>
+                    <td>${summary.savings}</td>
+                  </tr>`;
+        monthlySummaryTableBody.innerHTML += row;
+    });
+
+    const totalRow = `<tr style="background-color: #F5F5F5;">
+                        <td></td>
+                        <td style="color: green;"><strong>₹${totalIncomeYear}</td>
+                        <td style="color: red;"><strong>₹${totalExpenseYear}</td>
+                        <td style="color: blue;"><strong>₹${totalSavingsYear}</td>
+                      </tr>`;
+    monthlySummaryTableBody.innerHTML += totalRow;
+
+    document.getElementById('monthlySummaryTable').removeAttribute('hidden');
 }
 
 
