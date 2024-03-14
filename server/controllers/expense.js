@@ -114,7 +114,7 @@ exports.getAllExpenses = async (req, res, next) => {
 exports.getExpenses = (req, res, next) => {
     console.log("inside GET users")
     console.log(req.query, 'queryyyyyyyyyyyyyyyyyyyyyyyyy')
-    const page = req.query.page
+    const page = Number(req.query.page); 
     const itemsPerPage=5
     console.log('user id inbside getexpense', req.user.id)
     // req.user.getExpenses()..then((expenses) => { //method 2 to do line 38-43
@@ -135,7 +135,7 @@ exports.getExpenses = (req, res, next) => {
                 expenses: expenses,
                 currentPage: page,
                 hasNextPage: itemsPerPage * page < totalItems,
-                nextPage: page + 1,
+                nextPage: page + 1 ,
                 hasPreviousPage:page>1,
                 previousPage: page - 1,
                 lastPage:Math.ceil(totalItems/itemsPerPage)

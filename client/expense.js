@@ -32,7 +32,7 @@ function handleFormSubmit(event) {
                 showLeaderBoard()
 
             }
-            getExpenses();
+            getExpenses(1);
 
             // renderExpenses();
         })
@@ -51,8 +51,8 @@ function handleFormSubmit(event) {
 // }
 
 
-function getExpenses() {
-    axios.get(`${url}/expense/get-expenses?page=${currentPage}&limit=${expensesPerPage}`, {
+function getExpenses(page) {
+    axios.get(`${url}/expense/get-expenses?page=${page}&limit=${expensesPerPage}`, {
         headers: {
             "Authorization":
                 token
@@ -91,20 +91,45 @@ function renderExpenses(expenses) {//changed line 56 and 57 also
 }
 
 
-function updatePagination(totalExpenses) {
-    
-    const totalPages = Math.ceil(totalExpenses.length / expensesPerPage);
-    const pagination = document.getElementById('pagination');
-    pagination.innerHTML = '';
-    console.log(totalExpenses.length)
+function updatePagination({
+    currentPage,
+    hasNextPage,
+    nextPage,
+    hasPreviousPage,
+    previousPage,
+    lastPage
+}) {
 
-    for (let i = 1; i <= totalPages; i++) {
-        const button = document.createElement('button'); button.textContent = i;
-        button.addEventListener('click', () => {
-            currentPage = i;
-            getExpenses();
-        });
-        pagination.appendChild(button);
+    // const totalPages = Math.ceil(totalExpenses.length / expensesPerPage);
+    // const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+   
+
+    // for (let i = 1; i <= totalPages; i++) {
+    //     const button = document.createElement('button'); button.textContent = i;
+    //     button.addEventListener('click', () => {
+    //         currentPage = i;
+    //         getExpenses();
+    //     });
+    //     pagination.appendChild(button);
+    // }
+
+    if (hasPreviousPage) {
+        const btn2=document.createElement('button')
+        btn2.innerHTML = previousPage
+        btn2.addEventListener('click',()=>{getExpenses(previousPage)})
+        pagination.appendChild(btn2)
+
+    }
+    const btn1 = document.createElement('button')
+    btn1.innerHTML = currentPage
+    btn1.addEventListener('click', () => { getExpenses(currentPage) })
+    pagination.appendChild(btn1)
+    if (hasNextPage) {
+        const btn3 = document.createElement('button')
+        btn3.innerHTML = nextPage
+        btn3.addEventListener('click', () => { getExpenses(nextPage) })
+        pagination.appendChild(btn3)
     }
 }
 
@@ -119,7 +144,7 @@ function deleteExpense(id) {//changes
     axios.delete(deleteUrl, { headers: { "Authorization": token } }) //chamged
         .then(response => {
             console.log('Expense deleted successfully:', response.data);
-            getExpenses(); // Refresh the expenses list after deletion
+            getExpenses(1); // Refresh the expenses list after deletion
             showLeaderBoard()
         })
         .catch(error => {
@@ -291,5 +316,5 @@ function getUserDetails() {
 window.addEventListener('DOMContentLoaded', () => { //changed
     token = localStorage.getItem('token')
     checkPremium(localStorage.getItem('isPremium') === 'true')
-    getExpenses()
+    getExpenses(1)
 });
