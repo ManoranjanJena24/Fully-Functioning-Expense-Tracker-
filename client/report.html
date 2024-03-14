@@ -16,30 +16,44 @@
 
 
     <div class="container mt-6">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <button onclick="showReport()" class="btn btn-primary" id='view-report-btn'>View Report</button>
+            <select id="monthSelect" hidden onchange="showReport()">
+                <option value="0">Select Month</option>
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+        </div>
 
-
-
-
-        <button onclick="showReport()" class="btn btn-primary" id='view-report-btn'>View Report</button>
-
-        <table id="expenseSalaryTable" class="table" hidden>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>Category</th>
-                    <th>Income</th>
-                    <th>Expense</th>
-                </tr>
-            </thead>
-            <tbody id="expenseSalaryTableBody"></tbody>
-        </table>
+        <h2 id="tableTitle" class="text-center"></h2>
+        <div class="table-responsive">
+            <table id="expenseSalaryTable" class="table" hidden>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Income</th>
+                        <th>Expense</th>
+                    </tr>
+                </thead>
+                <tbody id="expenseSalaryTableBody"></tbody>
+            </table>
+        </div>
 
     </div>
 
     <!-- Bootstrap JS and Popper.js -->
-
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
     <script src="report.js"></script>
 </body>
