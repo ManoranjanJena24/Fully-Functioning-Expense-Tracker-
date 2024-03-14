@@ -115,7 +115,7 @@ exports.getExpenses = (req, res, next) => {
     console.log("inside GET users")
     console.log(req.query, 'queryyyyyyyyyyyyyyyyyyyyyyyyy')
     const page = Number(req.query.page); 
-    const itemsPerPage=5
+    const itemsPerPage=Number(req.query.limit)
     console.log('user id inbside getexpense', req.user.id)
     // req.user.getExpenses()..then((expenses) => { //method 2 to do line 38-43
     //     console.log("fetched Users")

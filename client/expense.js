@@ -4,8 +4,18 @@ let editId;
 let editedExpense
 let token;
 let currentPage = 1;
-const expensesPerPage = 5;
+let expensesPerPage = localStorage.getItem('expensesPerPage')||5;
 // let isPremium;
+
+const select = document.querySelector('.select');
+select.addEventListener('change', (event) => {
+    const selectedRows = event.target.value;
+    // Update the table content here based on the selected number of rows
+    console.log(`Selected rows: ${selectedRows}`);
+    expensesPerPage = selectedRows
+    localStorage.setItem('expensesPerPage', expensesPerPage)
+    getExpenses(1)
+});
 
 function handleFormSubmit(event) {
     event.preventDefault();
