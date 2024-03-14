@@ -306,3 +306,16 @@ function uploadToS3(data, filename) {
  
 
 }
+
+exports.getAllExpensesReport = (req, res, next) => {
+    console.log(req.user.id)
+
+    Expense.findAll({ where: { userId: req.user.id } }).then((expenses) => {//changes
+       
+
+        res.json(expenses)
+
+    }).catch(err => {
+        console.log(err)
+    })
+};

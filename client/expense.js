@@ -1,5 +1,4 @@
 var url = "http://localhost:3000"
-var editMode = false;
 let editId;
 let editedExpense
 let token;
@@ -25,16 +24,11 @@ function handleFormSubmit(event) {
         category: event.target.category.value,
         // userId: 1 //this is user Id //change the 1 later
     };
-    // expenses.push(expense);
-    // localStorage.setItem('expenses', JSON.stringify(expenses));
-    // event.target.reset();//Always reset after data Added :)
-    // renderExpenses();
-    if (editMode) {
-        editExpense(editId)
-    }
-    else {
+
+    
+   
         axios.post(`${url}/expense/add-expense`, expense, { headers: { "Authorization": token } }).then(res => { //changes
-            // console.log(res.data)
+           
             console.log('token', token)
             event.target.reset();
             if (localStorage.getItem('isPremium') === 'true') {
@@ -47,18 +41,9 @@ function handleFormSubmit(event) {
             // renderExpenses();
         })
             .catch(err => console.log(err))
-    }
+   
 
 }
-
-// function getExpenses() { //
-//     axios.get(`${url}/expense/get-expenses`, { headers: { "Authorization": token } }).then((data) => { //changed
-//         console.log(data)
-//         console.log(token)
-//         renderExpenses(data.data)//changed
-
-//     })
-// }
 
 
 function getExpenses(page) {
@@ -94,7 +79,6 @@ function renderExpenses(expenses) {//changed line 56 and 57 also
         li.innerHTML = `
       ${expense.amount} - ${expense.description} - ${expense.category} 
       <button type="button" class="btn btn-danger btn-sm float-right ml-2" onclick="deleteExpense(${id})">Delete</button>
-      <button type="button" class="btn btn-warning btn-sm float-right" onclick="editExpense(${id},${newExpense})">Edit</button>
     `;
         expensesList.appendChild(li);
     });
@@ -110,19 +94,7 @@ function updatePagination({
     lastPage
 }) {
 
-    // const totalPages = Math.ceil(totalExpenses.length / expensesPerPage);
-    // const pagination = document.getElementById('pagination');
     pagination.innerHTML = '';
-   
-
-    // for (let i = 1; i <= totalPages; i++) {
-    //     const button = document.createElement('button'); button.textContent = i;
-    //     button.addEventListener('click', () => {
-    //         currentPage = i;
-    //         getExpenses();
-    //     });
-    //     pagination.appendChild(button);
-    // }
 
     if (hasPreviousPage) {
         const btn2=document.createElement('button')
@@ -143,15 +115,12 @@ function updatePagination({
     }
 }
 
-function deleteExpense(id) {//changes
-    // expenses.splice(index, 1);
-    // localStorage.setItem('expenses', JSON.stringify(expenses));
-    // renderExpenses();
+function deleteExpense(id) {
 
     console.log(id)
     const deleteUrl = `${url}/expense/delete-expense/${id}`;
 
-    axios.delete(deleteUrl, { headers: { "Authorization": token } }) //chamged
+    axios.delete(deleteUrl, { headers: { "Authorization": token } }) 
         .then(response => {
             console.log('Expense deleted successfully:', response.data);
             getExpenses(1); // Refresh the expenses list after deletion
@@ -162,32 +131,7 @@ function deleteExpense(id) {//changes
         });
 }
 
-function editButton1(index, expense) {
-    editId = index
-    console.log(editId)
-    console.log(expense)
-    expense = JSON.parse(expense)
-    document.getElementById('amount').value = expense.amount; // start displaying on input fields
-    document.getElementById('description').value = expense.description;
-    document.getElementById('category').value = expense.category;
 
-}
-
-function editExpense(id) { //changes
-    const editUrl = `${url}/expense/edit-expense/${id}`;
-    console.log(id)
-    console.log(token)
-
-
-    axios.post(editUrl, { headers: { "Authorization": token } }) //chamged
-        .then(response => {
-            console.log('Expense deleted successfully:', response.data);
-            getExpenses(); // Refresh the expenses list after deletion
-        })
-        .catch(error => {
-            console.error('Error deleting expense:', error);
-        });
-}
 
 function checkPremium(value) {
 
@@ -196,20 +140,20 @@ function checkPremium(value) {
     const leaderBoard = document.getElementById("leaderBoard-button")
     const salaryForm = document.getElementById('salary-form')
     // console.log(token)
-    const reportBtn = document.getElementById('report-button'); //changes
+    const reportBtn = document.getElementById('report-button'); 
     if (!value) {
         button.style.display = "inline-block";  //make the button visible
         text.style.display = "none";
         leaderBoard.style.display = "none"
         salaryForm.style.display = "none"
-        reportBtn.style.display = "none" //changes
+        reportBtn.style.display = "none" 
     }
     else {
         button.style.display = "none";  //Hide the button
         text.style.display = "inline-block";
         leaderBoard.style.display = "inline-block"
         salaryForm.style.display = "inline-block"
-        reportBtn.style.display = "inline-block" //chNGES
+        reportBtn.style.display = "inline-block" 
 
     }
 }
@@ -235,10 +179,6 @@ function razoorpayfunction(event) {
                         }, { headers: { "Authorization": token } });
                         localStorage.setItem('isPremium', 'true')
                         checkPremium(true)
-                        // const button = document.getElementById('razoorpay-button');
-                        // const text = document.getElementById('premium-text')
-                        // button.style.display = "none";
-                        // text.style.display = "inline-block"
                         alert('You are a premium User now');
                     } catch (error) {
                         console.error('Error updating transaction status:', error);
@@ -275,11 +215,10 @@ function razoorpayfunction(event) {
 
 function showLeaderBoard() {
     console.log("inside LeaderBoard")
-    // axios.get(`${url}/expense/get-all-expenses`).then((data) => { //changed
-    axios.get(`${url}/purchase/leaderboard`).then((data) => { //changed
+    axios.get(`${url}/purchase/leaderboard`).then((data) => { 
 
         console.log(data)
-        renderLeaderBoard(data.data)//changed
+        renderLeaderBoard(data.data)
     })
 }
 
@@ -323,7 +262,7 @@ function getUserDetails() {
         console.log(err)
     })
 }
-window.addEventListener('DOMContentLoaded', () => { //changed
+window.addEventListener('DOMContentLoaded', () => { 
     token = localStorage.getItem('token')
     checkPremium(localStorage.getItem('isPremium') === 'true')
     getExpenses(1)

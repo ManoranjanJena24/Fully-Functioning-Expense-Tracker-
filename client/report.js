@@ -13,7 +13,7 @@ function showReport() {
     console.log(selectedMonth)
 
 
-    const expensesPromise = axios.get(`${url}/expense/get-expenses`, { headers: { "Authorization": token } });
+    const expensesPromise = axios.get(`${url}/expense/get-expenses-report`, { headers: { "Authorization": token } });
     const salariesPromise = axios.get(`${url}/salary/get-salaries`, { headers: { "Authorization": token } });
 
     Promise.all([expensesPromise, salariesPromise])
