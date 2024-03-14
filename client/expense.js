@@ -3,6 +3,8 @@ var editMode = false;
 let editId;
 let editedExpense
 let token;
+let currentPage = 1;
+const expensesPerPage = 5;
 // let isPremium;
 
 function handleFormSubmit(event) {
@@ -39,14 +41,33 @@ function handleFormSubmit(event) {
 
 }
 
-function getExpenses() { //
-    axios.get(`${url}/expense/get-expenses`, { headers: { "Authorization": token } }).then((data) => { //changed
-        console.log(data)
-        console.log(token)
-        renderExpenses(data.data)//changed
+// function getExpenses() { //
+//     axios.get(`${url}/expense/get-expenses`, { headers: { "Authorization": token } }).then((data) => { //changed
+//         console.log(data)
+//         console.log(token)
+//         renderExpenses(data.data)//changed
 
+//     })
+// }
+
+
+function getExpenses() {
+    axios.get(`${url}/expense/get-expenses?page=${currentPage}&limit=${expensesPerPage}`, {
+        headers: {
+            "Authorization":
+                token
+        }
     })
+        .then((response) => {
+            console.log(response)
+            renderExpenses(response.data.expenses);
+            updatePagination(response.data);
+        })
+        .catch((error) => {
+            console.error('Error fetching expenses:', error);
+        });
 }
+
 
 function renderExpenses(expenses) {//changed line 56 and 57 also
     console.log(expenses)
@@ -67,6 +88,24 @@ function renderExpenses(expenses) {//changed line 56 and 57 also
     `;
         expensesList.appendChild(li);
     });
+}
+
+
+function updatePagination(totalExpenses) {
+    
+    const totalPages = Math.ceil(totalExpenses.length / expensesPerPage);
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+    console.log(totalExpenses.length)
+
+    for (let i = 1; i <= totalPages; i++) {
+        const button = document.createElement('button'); button.textContent = i;
+        button.addEventListener('click', () => {
+            currentPage = i;
+            getExpenses();
+        });
+        pagination.appendChild(button);
+    }
 }
 
 function deleteExpense(id) {//changes
