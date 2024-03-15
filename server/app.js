@@ -45,7 +45,7 @@ app.use('/salary', salaryRoutes)
 
 app.use((req, res, next) => {
     console.log('url>>>>>>>', req.url)
-    res.sendFile(path.join(__dirname, `client/${req.url}`))
+    res.sendFile(path.join(__dirname, `public/${req.url}`))
 
 })
 
