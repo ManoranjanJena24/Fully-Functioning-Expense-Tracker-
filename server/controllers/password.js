@@ -9,6 +9,9 @@ function generateHash(password) {
     return bcrypt.hash(password, bcrypt.genSaltSync(8));//genSaltSync randomizes the password 8 times 
 }
 
+let url = "http://localhost:3000"
+// let url = "http://54.80.220.110:3000
+
 exports.postForgotEmail = (req, res, next) => {
     const email = req.body.email;
     const client = Sib.ApiClient.instance
@@ -34,7 +37,7 @@ exports.postForgotEmail = (req, res, next) => {
             }]
             tranEmailApi.sendTransacEmail({
                 sender, to: receivers, subject: "Reset the password link",
-                textContent: `this is your reset password link  http://localhost:3000/password/resetpassword/${response.id}`
+                textContent: `this is your reset password link  ${url}/password/resetpassword/${response.id}`
             }).then(() => {
                 console.log("Mail Send")
                 res.json({ email: email })
