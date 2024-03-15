@@ -36,11 +36,18 @@ app.set('view engine', 'ejs'); // Set EJS as the view engine
 app.set('views', path.join(__dirname, 'views'));
 
 
+
 app.use('/user', userRoutes);
 app.use('/expense', expenseRoutes)
 app.use('/purchase', purchaseRoutes)
 app.use('/password', passwordRoutes)
 app.use('/salary', salaryRoutes)
+
+app.use((req, res, next) => {
+    console.log('url>>>>>>>', req.url)
+    res.sendFile(path.join(__dirname, `../client/${req.url}`))
+
+})
 
 Expense.belongsTo(User)
 User.hasMany(Expense)
