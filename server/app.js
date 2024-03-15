@@ -43,18 +43,18 @@ app.use('/purchase', purchaseRoutes)
 app.use('/password', passwordRoutes)
 app.use('/salary', salaryRoutes)
 
-// app.use((req, res, next) => {
-//     console.log('url>>>>>>>', req.url)
-//     res.sendFile(path.join(__dirname, `public/${req.url}`))
-
-// })
-
-
 app.use((req, res, next) => {
-    const url = req.url === '/' ? '/index.html' : req.url; // Default to index.html
-    console.log('url>>>>>>>', url);
-    res.sendFile(path.join(__dirname, `public${url}`));
-});
+    console.log('url>>>>>>>', req.url)
+    res.sendFile(path.join(__dirname, `public/${req.url}`))
+
+})
+
+
+// app.use((req, res, next) => {
+//     const url = req.url === '/' ? '/index.html' : req.url; // Default to index.html
+//     console.log('url>>>>>>>', url);
+//     res.sendFile(path.join(__dirname, `public${url}`));
+// });
 
 
 Expense.belongsTo(User)
