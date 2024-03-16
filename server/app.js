@@ -1,12 +1,12 @@
 const express = require('express');
-const helmet = require('helmet')
-const morgan=require('morgan')
+// const helmet = require('helmet')
+const morgan = require('morgan')
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const sequelize = require('./utils/database')
 var Sib = require('sib-api-v3-sdk');
 // const sib = new Sib()
-const fs=require('fs')
+const fs = require('fs')
 const path = require('path');
 
 
@@ -18,10 +18,26 @@ const Salary = require('./models/salary')
 
 
 const app = express();
-const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'),{flags:'a'})
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
 const cors = require('cors')
-app.use(helmet())
-app.use(morgan('combined', { stream:accessLogStream}))
+// app.use(helmet())
+// app.use(
+//     helmet({
+//         contentSecurityPolicy: false,
+//     })
+// );
+
+// app.use(
+//     helmet.contentSecurityPolicy({
+//         directives: {
+//             defaultSrc: ["'self'"],
+//             scriptSrc: ["'self'", "https://checkout.razorpay.com"],
+//             connectSrc: ["'self'", "http://16.16.167.57:3000"],
+//         },
+//     })
+// );
+
+app.use(morgan('combined', { stream: accessLogStream }))
 
 const userRoutes = require('./routes/user')
 const expenseRoutes = require('./routes/expense')

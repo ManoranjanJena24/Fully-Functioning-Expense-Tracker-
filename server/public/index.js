@@ -22,17 +22,32 @@ sign_in_btn2.addEventListener("click", () => {
 // let url = "http://localhost:3000"
 let url = "http://54.80.220.110:3000"
 
-function handleSignUpForm(event) {
-    event.preventDefault();
-    const signUpData = {
-        name: event.target.name.value,
-        email: document.getElementById('email').value,
-        password: event.target.password.value,
-    }
-    event.target.reset();
-    postSignUpData(signUpData)
+// function handleSignUpForm(event) {
+//     event.preventDefault();
+//     const signUpData = {
+//         name: event.target.name.value,
+//         email: document.getElementById('email').value,
+//         password: event.target.password.value,
+//     }
+//     event.target.reset();
+//     postSignUpData(signUpData)
 
-}
+// }
+
+document.getElementById('signUpForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const errormsg = document.getElementById('errormsg');
+    errormsg.innerHTML = '';
+
+    const signUpData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value
+    };
+
+    this.reset();
+    postSignUpData(signUpData);
+});
 
 
 function postSignUpData(data) {
@@ -46,21 +61,36 @@ function postSignUpData(data) {
     })
 }
 
-function handleSignInForm(event) {
-    event.preventDefault();
-    const errormsg = document.getElementById('errormsg')
-    errormsg.innerHTML = ''
-    const loginData = {
-        email: event.target.loginemail.value,
-        password: event.target.loginPassword.value
-    }
-    event.target.reset();
-    console.log(loginData)
-    userLogin(loginData);
+// function handleSignInForm(event) {
+//     event.preventDefault();
+//     const errormsg = document.getElementById('errormsg')
+//     errormsg.innerHTML = ''
+//     const loginData = {
+//         email: event.target.loginemail.value,
+//         password: event.target.loginPassword.value
+//     }
+//     event.target.reset();
+//     console.log(loginData)
+//     userLogin(loginData);
 
-}
+// }
+
+document.getElementById('signInForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const errormsg = document.getElementById('errormsg');
+    errormsg.innerHTML = '';
+
+    const loginData = {
+        email: document.getElementById('loginemail').value,
+        password: document.getElementById('loginPassword').value
+    };
+
+    this.reset();
+    userLogin(loginData);
+});
 
 function userLogin(data) {
+    console.log(url)
     axios.post(`${url}/user/login`, data).then((res) => {
         alert("User Loggedin succesfully")
         localStorage.setItem("user", data.email)
@@ -80,6 +110,10 @@ function userLogin(data) {
 }
 
 
-function forgotPassword() {
+// function forgotPassword() {
+//     window.location.href = 'forgotpassword.html';
+// }
+
+document.getElementById('forgot-password-btn').addEventListener('click', function () {
     window.location.href = 'forgotpassword.html';
-}
+});

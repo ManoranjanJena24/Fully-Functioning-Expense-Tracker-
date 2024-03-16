@@ -5,17 +5,21 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://cdn.jsdelivr.net/npm/">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
         integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
-    <link rel="stylesheet" href="./styles.css"> -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="./styles.css">
+
+
+
     <title>signin-signup</title>
 </head>
 
 <body>
     <div class="container">
         <div class="signin-signup">
-            <form action="" onsubmit="handleSignInForm(event)" class="sign-in-form">
+            <!-- <form action="" onsubmit="handleSignInForm(event)" class="sign-in-form"> -->
+            <form action="" class="sign-in-form" id="signInForm">
                 <h2 class="title">Sign in</h2>
                 <div class="input-field">
                     <i class="fas fa-envelope"></i>
@@ -26,14 +30,19 @@
                     <input type="password" placeholder="Password" name="loginPassword" id="loginPassword" required>
                 </div>
                 <input type="submit" value="Login" class="btn">
-                <button class="btn" id="forgot-password-btn" onclick="forgotPassword()">Forgot Password</button>
-                <p class="account-text">Don't have an account? <a href="#" id="sign-up-btn2">Sign up</a></p>
+                <button class="btn" id="forgot-password-btn">Forgot Password</button>
                 <p id="errormsg"></p>
+                <p class="account-text">Don't have an account? <a href="#" id="sign-up-btn2">Sign up</a></p>
+
             </form>
+            <!-- <button class="btn" id="forgot-password-btn" onclick="forgotPassword()">Forgot Password</button> -->
+            <!-- <button class="btn" id="forgot-password-btn">Forgot Password</button>
+            <p id="errormsg"></p> -->
 
 
 
-            <form onsubmit="handleSignUpForm(event)" action="" class="sign-up-form">
+            <!-- <form onsubmit="handleSignUpForm(event)" action="" class="sign-up-form"> -->
+            <form action="" class="sign-up-form" id="signUpForm">
                 <h2 class="title">Sign up</h2>
                 <div class="input-field">
                     <i class="fas fa-user"></i>
@@ -59,7 +68,7 @@
                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque accusantium dolor, eos incidunt
                         minima iure?</p>
                     <button class="btn" id="sign-in-btn">Sign in</button>
-                    
+
                 </div>
                 <img src="signin.svg" alt="" class="image">
             </div>
@@ -74,7 +83,9 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./index.js"></script>
+
 </body>
 
 </html>
